@@ -10,7 +10,7 @@ object RadiationSourcesApp extends IOApp.Simple {
   def run: IO[Unit] = for {
     sources <- List.fill(5)(RadiationSourceGenerator.randomSource[IO]).sequence
     _ <- RadiationEventStream
-      .fromSources[IO](sources, interval = 2.seconds)
+      .hybridSourceStream[IO](initialCount = 5, interval = 2.seconds)
       .evalMap(event => IO.println(event))
       .compile
       .drain
