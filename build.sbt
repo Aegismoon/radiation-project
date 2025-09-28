@@ -44,10 +44,12 @@ lazy val radiometer = (project in file("modules/radiometer"))
         "com.typesafe.slick" %% "slick"          % SlickVersion,
         "com.typesafe.slick" %% "slick-hikaricp" % SlickVersion,
         "org.postgresql"      % "postgresql"     % PostgresDriverVer,
+        // SLF4J + Logback
+        "ch.qos.logback" % "logback-classic" % "1.5.6" % Runtime,
         // Circe для EventParser
         "io.circe" %% "circe-core"    % CirceVersion,
         "io.circe" %% "circe-generic" % CirceVersion,
         "io.circe" %% "circe-parser"  % CirceVersion
       ),
-    Compile / run / mainClass := Some("RadiometerApp")
+    Compile / run / mainClass := Some("radiometer.app.RadiometerApp")
   )

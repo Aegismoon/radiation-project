@@ -14,7 +14,7 @@ object RadiometerApp extends IOApp.Simple {
   private def mkConsumer: Resource[IO, KafkaConsumer[IO, String, String]] = {
     val settings = ConsumerSettings[IO, String, String]
       .withBootstrapServers(sys.env.getOrElse("KAFKA_BOOTSTRAP", "localhost:29092"))
-      .withGroupId(sys.env.getOrElse("KAFKA_GROUP_ID", "radiometer-11"))
+      .withGroupId(sys.env.getOrElse("KAFKA_GROUP_ID", "radiometer-3"))
       .withAutoOffsetReset(AutoOffsetReset.Earliest)
     KafkaConsumer.resource(settings)
   }
@@ -46,8 +46,8 @@ object RadiometerApp extends IOApp.Simple {
         router <- Router.make[IO](store)
 
         pipeline <- FanoutPipeline.make[IO](consumer, parser, reg, router)
-        _ <- IO.delay(println("[app] Subscribed to topic: radiation.events"))
-        _ <- pipeline.run("radiation.events")
+        _ <- IO.delay(println("[app] Subscribed to topic: radiation-events"))
+        _ <- pipeline.run("radiation-events")
           .handleErrorWith(e => IO.println(s"[ERROR] ${e.getMessage}"))
       } yield ()
     }

@@ -20,6 +20,7 @@ final class FanoutPipeline[F[_]: Async](
         val key = rec.key
         val raw = rec.value
         for {
+          _         <- Async[F].delay(println(s"[pipeline] raw: $raw"))
           event     <- parser.parse(Some(key), raw)
           _         <- Async[F].delay(println(s"[pipeline] parsed event: $event"))
           decisions <- registry.processors.traverse(_.process(event)).map(_.flatten)
