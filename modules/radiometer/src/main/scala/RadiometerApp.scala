@@ -12,10 +12,16 @@ import radiometer.processors._
 object RadiometerApp extends IOApp.Simple {
 
   private def mkConsumer: Resource[IO, KafkaConsumer[IO, String, String]] = {
-    val settings = ConsumerSettings[IO, String, String]
-      .withBootstrapServers(sys.env.getOrElse("KAFKA_BOOTSTRAP", "localhost:9092"))
-      .withGroupId(sys.env.getOrElse("KAFKA_GROUP_ID", "radiometer-1"))
-      .withAutoOffsetReset(AutoOffsetReset.Earliest)
+    val bootstrap = sys.env.get("KAFKA_BOOTSTRAP")
+      .orElse(sys.env.get("KAFKA_BOOTSTRAP_SERVERS"))
+      .getOrElse("localhost:9092")
+    val groupId = sys.env.getOrElse("KAFKA_GROUP_ID", "radiometer-1")
+
+    val settings =
+      ConsumerSettings[IO, String, String]
+        .withBootstrapServers(bootstrap)
+        .withGroupId(groupId)
+        .withAutoOffsetReset(AutoOffsetReset.Earliest)
     KafkaConsumer.resource(settings)
   }
 
@@ -36,18 +42,19 @@ object RadiometerApp extends IOApp.Simple {
     println("[app] Radiometer starting…")
 
     (mkConsumer, mkDatabase).tupled.use { case (consumer, db) =>
+      val topic = "radiation-events"
       for {
-        dose <- DoseAccumulatorProcessor.make[IO]
-        rate <- RateThresholdProcessor.make[IO](TypeAwareThresholds())
-        reg <- ProcessorRegistry.make[IO](List(rate, dose))
-
-        parser = EventParser.circe[IO]
-        store = Storage.slick[IO](db)
-        router <- Router.make[IO](store)
-
-        pipeline <- FanoutPipeline.make[IO](consumer, parser, reg, router)
-        _ <- IO.delay(println("[app] Subscribed to topic: radiation.events"))
-        _ <- pipeline.run("radiation.events")
+        _ <- IO.println(s"[app] Subscribed to topic: $topic")
+        // ВАЖНО: подписка и бесконечный стрим records
+        _ <- consumer.subscribeTo(topic) *>
+          consumer.records
+            .evalMap { cr =>
+              IO.println(s"[got] key=${cr.record.key} value=${cr.record.value.take(120)}")
+            }
+            .handleErrorWith(e => Stream.eval(IO.println(s"[consumer ERROR] ${e.getMessage}")) >> Stream.raiseError[IO](e))
+            .onFinalize(IO.println("[consumer] stopping"))
+            .compile
+            .drain
       } yield ()
     }
   }
