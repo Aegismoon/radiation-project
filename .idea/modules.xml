@@ -2,8 +2,10 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/project/radiation-sources.iml" filepath="$PROJECT_DIR$/.idea/modules/project/radiation-sources.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/project/radiation-sources.radiation-sources-build.iml" filepath="$PROJECT_DIR$/.idea/modules/project/radiation-sources.radiation-sources-build.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/project/radiation-project.iml" filepath="$PROJECT_DIR$/.idea/modules/project/radiation-project.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/project/modules/generator/radiation-project.generator.iml" filepath="$PROJECT_DIR$/.idea/modules/project/modules/generator/radiation-project.generator.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/project/radiation-project.radiation-project-build.iml" filepath="$PROJECT_DIR$/.idea/modules/project/radiation-project.radiation-project-build.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/project/modules/radiometer/radiation-project.radiometer.iml" filepath="$PROJECT_DIR$/.idea/modules/project/modules/radiometer/radiation-project.radiometer.iml" />
     </modules>
   </component>
 </project>

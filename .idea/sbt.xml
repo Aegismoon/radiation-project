@@ -8,6 +8,8 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/modules/generator" />
+            <option value="$PROJECT_DIR$/modules/radiometer" />
             <option value="$PROJECT_DIR$/project" />
           </set>
         </option>
