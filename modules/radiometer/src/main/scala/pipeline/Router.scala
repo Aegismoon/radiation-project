@@ -35,7 +35,6 @@ final class Router[F[_]: Async](storage: Storage[F]) {
 }
 
 object Router {
-  /** Фабрика без `new` */
   def make[F[_]: Async](storage: Storage[F]): F[Router[F]] =
     Async[F].pure(new Router[F](storage))
 }
